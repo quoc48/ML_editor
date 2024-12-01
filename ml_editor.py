@@ -118,3 +118,5 @@ def get_suggestions(sentence_list):
     result_str += flesch
 
     return result_str
+
+# Adding 
