@@ -77,7 +77,7 @@ def get_suggestions(sentence_list):
     result_str = ""
     adverbs_usage = "Adverb usage: %s told/said, %s but/and, %s wh adverbs" % (
         told_said_usage,
-        but_and_usage
+        but_and_usage,
         wh_adverbs_usage
     )
     result_str += adverbs_usage
@@ -88,3 +88,33 @@ def get_suggestions(sentence_list):
         average_word_length,
         unique_words_fraction,
     )
+    # Using HTML break to later display on a webapp
+    result_str += "<br/>"
+    result_str += word_stats
+
+    number_of_syllables = count_total_syllables(sentence_list)
+    number_of_words = count_total_words(sentence_list)
+    number_of_sentences = len(sentence_list)
+
+    syllable_counts = "%d syllables, %d words, %d sentences" % (
+        number_of_syllables,
+        number_of_words,
+        number_of_sentences,
+    )
+    result_str += "<br/>"
+    result_str += syllable_counts
+
+    flesch_score = compute_flesch_reading_ease(
+        number_of_syllables, number_of_words, number_of_sentences
+    )
+
+    flesch = "%d syllables, %.2f flesch score: %s" % (
+        number_of_syllables,
+        flesch_score,
+        get_reading_level_from_flesch(flesch_score),
+    )
+
+    result_str += "<br/>"
+    result_str += flesch
+
+    return result_str
