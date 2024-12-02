@@ -45,6 +45,22 @@ def preprocess_input(text):
     tokens = [nltk.word_tokenize(sentence) for sentence in sentences]
     return tokens
 
+def compute_flesch_reading_ease(total_syllables, total_words, total_sentences):
+    """
+    Computes readability score from summary statistics
+    :param total_syllables: number of syllables in input text
+    :param total_words: number of words in input text
+    :param total_sentences: number of sentences in input text
+    :return: A readability score: the lower the score, the more complex the text is deemed to be
+    """
+    return (
+        206.85
+        - 1.015 * (total_words / total_sentences)
+        - 84.6 * (total_syllables / total_words)
+    )
+
+
+
 def get_suggestions(sentence_list):
     """
     Returns a string containing out suggestions
