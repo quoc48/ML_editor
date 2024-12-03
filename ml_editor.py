@@ -138,7 +138,6 @@ def count_word_syllables(word):
 
 def count_sentence_syllables(tokens):
     """
-    Count syllables in a sentence
     :param tokens: a list of words and potentially punctuation
     :return: the number of syllables in the sentence
     """
