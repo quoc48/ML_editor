@@ -55,3 +55,23 @@ def parse_xml_to_csv(path, save_path=None):
         df.to_csv(save_path)
     return df
 
+def get_data_from_dump(site_name, load_existing=True):
+    """
+    load .xml dump, parse it to csv, serialize it and return it
+    :param load_existing: should we load the existing extract or regenerate it
+    :param site_name: name of stackexchange website
+    :return: pandas DataFrame of the parsed xml
+    """
+    data_path = Path("data")
+    dump_name = "%s.stackexchange.com/Posts.xml" % site_name
+    extracted_name = "%s.csv" % site_name
+    dump_path = data_path / dump_name
+    extracted_path = data_path / extracted_name
+
+    if not (load_existing and os.path.isfile(extracted_path)):
+        all_data = parse_xml_to_csv(dump_path)
+        all_data.to_csv(extracted_path)
+    else:
+        all_data = pd.DataFrame.from_csv(extracted_path)
+    
+    return all_data
