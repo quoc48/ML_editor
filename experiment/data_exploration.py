@@ -13,11 +13,7 @@ sys.path.append("..")
 import warnings
 warnings.filterwarnings('ignore')
 
-print("Current working directory:", os.getcwd())
-
 df = pd.read_csv(Path('data/writers.csv'))
-
-print("Columns in the DataFrame:", df.columns)
 
 # Start by changing types to ake precessing easier
 df["AnswerCount"] = df["AnswerCount"].fillna(-1)
