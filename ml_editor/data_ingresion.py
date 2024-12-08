@@ -15,17 +15,18 @@ def generate_model_text_features(raw_df_path, save_path=None):
     :param save_path: path to save processed DataFrame to
     :return: processed DataFrame
     """
-    df = pd.read_csv(raw_df_path)
-    df = format_raw_df(df.copy())
-    df = df.loc[df["is_question"]].copy()
+    df = pd.read_csv(raw_df_path)   # Load the CSV data into a DataFrame
+    df = format_raw_df(df.copy())   # Format the raw DataFrame
+    df = df.loc[df["is_question"]].copy()   # Filter for questions only
     df["full_text"] = df["Title"].str.cat(df["body_text"], sep=" ", na_rep="")
+    # Combine Title and Body into one text field
 
-    df = add_v1_features(df.copy())
-    df = add_v2_text_features(df.copy)
+    df = add_v1_features(df.copy()) # Add features from add_v1_features
+    df = add_v2_text_features(df.copy)  # Add features from `add_v2_text_features
 
     if save_path:
-        df.to_csv(save_path)
-    return df
+        df.to_csv(save_path)    # Save the processed DataFrame to disk
+    return df   # Return the processed DataFrame
 
 def parse_xml_to_csv(path, save_path=None):
     """
@@ -47,8 +48,7 @@ def parse_xml_to_csv(path, save_path=None):
         # Decode text from HTML
         soup = BeautifulSoup(item["Body"], features="html.parser")
         item["body_text"] = soup.get_text()
-
-    
+  
     # Create dataframe from our list of dictionaries
     df = pd.DataFrame.from_dict(all_rows)
     if save_path:
