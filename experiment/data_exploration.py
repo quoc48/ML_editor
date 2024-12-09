@@ -55,12 +55,11 @@ print("%s total questions \n %s  received at least one answer \n %s received an 
 
 # Create the figure
 fig = plt.figure(figsize=(16,10))
-fig.suptitle("Distribution of question scores")
-plt.xlabel("Question scores")
+fig.suptitle(
+    "Distribution of question length for sentences shorter than 2000 words")
+plt.xlabel("Words per question")
 plt.ylabel("Number of questions")
-
-# Plot the histogram
-df["Score"].hist(bins=200)
+q_len_trunc = plt.hist(df[df["text_len"]<2000]["text_len"], bins=200, log=False)
 
 # Show the plot
 plt.show()
