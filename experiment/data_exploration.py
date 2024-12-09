@@ -29,13 +29,38 @@ df["text_len"] = df["full_text"].str.len()
 # A question is a post of id 1
 df["is_question"] = df["PostTypeId"] == 1
 
+df = df[df["PostTypeId"].isin([1,2])]
+
 # Display columns and counts of non-null entries
 print("Displaying DataFrame info:")
-df.info()
 
-# Additional checks
-print(f"Number of rows: {len(df)}")
-print("First 5 rows of the DataFrame:")
-print(df.head())
+questions_with_accepted_answers = df[df["is_question"] & ~(df["AcceptedAnswerId"].isna())]
+q_and_a = questions_with_accepted_answers.join(df[["body_text"]], on="AcceptedAnswerId", how="left", rsuffix="_answer")
 
-print("Data exploration completed successfully.")
+# Setting this option allows us to display all the data
+pd.options.display.max_colwidth = 500
+q_and_a[["body_text", "body_text_answer"]][:3]
+
+print(q_and_a[["body_text", "body_text_answer"]][:3])
+
+has_accepted_answer = df[df["is_question"] & ~(df["AcceptedAnswerId"].isna())]
+received_answers = df[df["is_question"] & (df["AnswerCount"]!=0)]
+no_answers = df[df["is_question"] & (df["AcceptedAnswerId"].isna()) & (df["AnswerCount"]==0)]
+
+print("%s total questions \n %s  received at least one answer \n %s received an accepted answer" % (
+    len(df[df["is_question"]]),
+    len(received_answers),
+    len(has_accepted_answer)))
+# df.info()
+
+# Create the figure
+fig = plt.figure(figsize=(16,10))
+fig.suptitle("Distribution of question scores")
+plt.xlabel("Question scores")
+plt.ylabel("Number of questions")
+
+# Plot the histogram
+df["Score"].hist(bins=200)
+
+# Show the plot
+plt.show()
