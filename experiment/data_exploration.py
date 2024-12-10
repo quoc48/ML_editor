@@ -31,35 +31,28 @@ df["is_question"] = df["PostTypeId"] == 1
 
 df = df[df["PostTypeId"].isin([1,2])]
 
-# Display columns and counts of non-null entries
-print("Displaying DataFrame info:")
 
-questions_with_accepted_answers = df[df["is_question"] & ~(df["AcceptedAnswerId"].isna())]
-q_and_a = questions_with_accepted_answers.join(df[["body_text"]], on="AcceptedAnswerId", how="left", rsuffix="_answer")
+high_score = df["Score"] > df["Score"].median()
+# We filter out really long questions
+normal_length = df["text_len"] < 2000
 
-# Setting this option allows us to display all the data
-pd.options.display.max_colwidth = 500
-q_and_a[["body_text", "body_text_answer"]][:3]
+ax = df[df["is_question"] & high_score & normal_length]["text_len"].hist(
+    bins=60,
+    density=True,
+    histtype="step",
+    color="orange",
+    linewidth=3,
+    grid=False,
+    figsize=(16, 10),
+)
 
-print(q_and_a[["body_text", "body_text_answer"]][:3])
 
-has_accepted_answer = df[df["is_question"] & ~(df["AcceptedAnswerId"].isna())]
-received_answers = df[df["is_question"] & (df["AnswerCount"]!=0)]
-no_answers = df[df["is_question"] & (df["AcceptedAnswerId"].isna()) & (df["AnswerCount"]==0)]
-
-print("%s total questions \n %s  received at least one answer \n %s received an accepted answer" % (
-    len(df[df["is_question"]]),
-    len(received_answers),
-    len(has_accepted_answer)))
-# df.info()
-
-# Create the figure
-fig = plt.figure(figsize=(16,10))
-fig.suptitle(
-    "Distribution of question length for sentences shorter than 2000 words")
-plt.xlabel("Words per question")
-plt.ylabel("Number of questions")
-q_len_trunc = plt.hist(df[df["text_len"]<2000]["text_len"], bins=200, log=False)
+scatter = df[df["is_question"]][["Score", "AnswerCount"]].plot(x="Score", y="AnswerCount", 
+                                                               kind="scatter",
+                                                              figsize=(16, 10))
+ax.set_xlabel("Score")
+ax.set_ylabel("Num answers")
+scatter.set_title("Answer counts as a function of question score");
 
 # Show the plot
 plt.show()
