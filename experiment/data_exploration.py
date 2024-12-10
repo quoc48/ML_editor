@@ -32,27 +32,33 @@ df["is_question"] = df["PostTypeId"] == 1
 df = df[df["PostTypeId"].isin([1,2])]
 
 
-high_score = df["Score"] > df["Score"].median()
-# We filter out really long questions
-normal_length = df["text_len"] < 2000
+fig = plt.figure(figsize=(16,10))
+fig.suptitle("Distribution of number of answers for high and low score questions")
+plt.xlim(-5,80)
 
-ax = df[df["is_question"] & high_score & normal_length]["text_len"].hist(
-    bins=60,
-    density=True,
-    histtype="step",
-    color="orange",
-    linewidth=3,
-    grid=False,
-    figsize=(16, 10),
-)
+ax = df[df["is_question"] &
+        (df["Score"] > df["Score"].median())]["AnswerCount"].hist(bins=60,
+                                                          density=True,
+                                                          histtype="step",
+                                                          color="orange",
+                                                          linewidth=3,
+                                                          grid=False,
+                                                          figsize=(16, 10))
 
+df[df["is_question"] &
+   ~(df["Score"] > df["Score"].median())]["AnswerCount"].hist(bins=60,
+                                                     density=True,
+                                                     histtype="step",
+                                                     color="purple",
+                                                     linewidth=3,
+                                                     grid=False)
 
-scatter = df[df["is_question"]][["Score", "AnswerCount"]].plot(x="Score", y="AnswerCount", 
-                                                               kind="scatter",
-                                                              figsize=(16, 10))
-ax.set_xlabel("Score")
-ax.set_ylabel("Num answers")
-scatter.set_title("Answer counts as a function of question score");
+handles = [Rectangle((0, 0), 1, 1, color=c, ec="k") for c in
+           ["orange", "purple"]]
+labels = ["High score", "Low score"]
+plt.legend(handles, labels)
+ax.set_xlabel("Num answers")
+ax.set_ylabel("Percentage of sentences");
 
 # Show the plot
 plt.show()
