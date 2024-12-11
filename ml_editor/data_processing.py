@@ -31,3 +31,14 @@ def format_raw_df(df):
         rsuffix="_question",
     )
     return df
+
+def get_vertorized_series(text_series, vectorizer):
+    """
+    Vectorizes an input series using a pre-trained vertorizer
+    :param text_series: pandas Series of text
+    :param vectorizer: pretrained sklearn vectorizer
+    :return: array if vectorized feature
+    """
+    vectors = vectorizer.transform(text_series)
+    vectorized_series = [vectors[i] for i in range(vectors.shape[0])]
+    return vectorized_series
