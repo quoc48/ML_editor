@@ -42,3 +42,13 @@ def get_vertorized_series(text_series, vectorizer):
     vectors = vectorizer.transform(text_series)
     vectorized_series = [vectors[i] for i in range(vectors.shape[0])]
     return vectorized_series
+
+
+def get_normalized_series(df, col):
+    """
+    Get a normalized version of a column
+    :param df: DataFrame
+    :param col: column name
+    :return: normalized series using z-score
+    """
+    return (df[col] - df[col].mean()) / df[col].std()
