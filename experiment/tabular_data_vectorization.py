@@ -19,6 +19,13 @@ tabular_df = df[df["is_question"]][["Tags", "CommentCount", "CreationDate", "Sco
 tabular_df["NormComment"] = get_normalized_series(tabular_df, "CommentCount")
 tabular_df["NormScore"] = get_normalized_series(tabular_df, "Score")
 
-print(tabular_df.head())
+# Convert our date to a pandas datetime
+tabular_df["date"] = pd.to_datetime(tabular_df["CreationDate"])
 
- 
+# Extract meaningful features from the datetime object
+tabular_df["year"] = tabular_df["date"].dt.year
+tabular_df["month"] = tabular_df["date"].dt.month
+tabular_df["day"] = tabular_df["date"].dt.day
+tabular_df["hour"] = tabular_df["date"].dt.hour
+
+print(tabular_df.head())
