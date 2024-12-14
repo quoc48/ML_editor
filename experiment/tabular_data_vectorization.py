@@ -29,3 +29,17 @@ tabular_df["day"] = tabular_df["date"].dt.day
 tabular_df["hour"] = tabular_df["date"].dt.hour
 
 print(tabular_df.head())
+
+# Select our tags, represented as strings, and transform them into arrays of tags
+tags = tabular_df["Tags"]
+clean_tags = tags.str.split("><").apply(
+    lambda x: [a.strip("<").strip(">") for a in x])
+
+# Use pandas' get_dummies to get dummy values 
+# select only tags that appear over 500 times
+tag_columns = pd.get_dummies(clean_tags.apply(pd.Series).stack()).groupby(level=0).sum()
+all_tags = tag_columns.astype(bool).sum(axis=0).sort_values(ascending=False)
+top_tags = all_tags[all_tags > 500]
+top_tag_columns = tag_columns[top_tags.index]
+
+print(top_tag_columns.head())
