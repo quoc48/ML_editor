@@ -43,3 +43,13 @@ top_tags = all_tags[all_tags > 500]
 top_tag_columns = tag_columns[top_tags.index]
 
 print(top_tag_columns.head())
+
+# Add our tags back into our initial DataFrame
+final = pd.concat([tabular_df, top_tag_columns], axis=1)
+
+# Keep only the vectorized features
+col_to_keep = ["year", "month", "day", "hour", "NormComment", 
+               "NormScore"] + list(top_tags.index)
+final_features = final[col_to_keep]
+
+print(final_features.head())
