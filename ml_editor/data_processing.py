@@ -52,3 +52,16 @@ def get_normalized_series(df, col):
     :return: normalized series using z-score
     """
     return (df[col] - df[col].mean()) / df[col].std()
+
+def get_random_train_test_split(posts, test_size=0.3, random_state=40):
+    """
+    Get train/test split from DataFrame
+    Assumes the DataFrame has one row per question example
+    :param posts: all posts, with their labels
+    :param test_size: the proportion to allocate to test
+    :param random_state: a random seed
+    """
+    return train_test_split(
+        posts, test_size=test_size, random_state=random_state
+    )
+
