@@ -53,6 +53,27 @@ def get_normalized_series(df, col):
     """
     return (df[col] - df[col].mean()) / df[col].std()
 
+def get_vectorized_inputs_and_label(df):
+    """
+    Concatenate DataFrame features with text vectors
+    :param df: DataFrame with calculated features
+    :return: concatenated vector consisting of features and text
+    """
+    vectorized_features = np.append(
+        np.vstack(df["vectors"]),
+        df[
+            [
+                "action_verb_full",
+                "question_mark_full",
+                "norm_text_len",
+                "language_question",
+            ]
+        ],
+        1,
+    )
+    label = df["Score"] > df["Score"].median()
+    return vectorized_features, label
+
 def get_random_train_test_split(posts, test_size=0.3, random_state=40):
     """
     Get train/test split from DataFrame
@@ -65,3 +86,20 @@ def get_random_train_test_split(posts, test_size=0.3, random_state=40):
         posts, test_size=test_size, random_state=random_state
     )
 
+def get_split_by_author(
+    posts, author_id_column="OwnerUserId", test_size=0.3, random_state=40
+):
+    """
+    Get train/test split
+    Guarantee every author only appears in one of the splits
+    :param posts: all posts, with their labels
+    :param author_id_column: name of the column containing the author_id
+    :param test_size: the proportion to allocate to test
+    :param random_state: a random seed
+    """
+    splitter = GroupShuffleSplit(
+        n_splits=1, test_size=test_size, random_state=random_state
+    )
+    splits = splitter.split(posts, groups=posts[author_id_column])
+    train_idx, test_idx = next(splits)
+    return posts.iloc[train_idx, :], posts.iloc[test_idx, :]
